@@ -1,0 +1,19 @@
+# .dockerignore
+
+# Exclude OS and IDE files
+.DS_Store
+Thumbs.db
+*.iml
+*.idea/
+.vscode/
+
+# (REMOVED build/ and target/ so your JAR is copied into the image)
+
+# Exclude logs
+*.log
+
+# Exclude environment variables and other secrets
+.env
+
+# Exclude any other local config files you don’t want in the image
+*.local
