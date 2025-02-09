@@ -1,22 +1,32 @@
-# Stage 1: Build the app using Gradle
+# -----------------------
+# STAGE 1: BUILD
+# -----------------------
 FROM gradle:8.2.1-jdk17 AS builder
+
+# Set a custom Gradle cache directory to avoid permission issues
+ENV GRADLE_USER_HOME=/app/.gradle-cache
+
 WORKDIR /app
 
-# Copy all your project files into the build container
+# Copy everything into the container
 COPY . .
 
-# Run Gradle build (skip tests for faster builds if you want)
-RUN gradle clean build -x test
+# Make sure the gradlew script is executable
+RUN chmod +x gradlew
 
-# Stage 2: Create the final runtime image
+# Build the project using the Gradle wrapper
+# -x test to skip tests if you want faster builds
+# --no-daemon to avoid daemon permission issues
+RUN ./gradlew clean build -x test --no-daemon
+
+# -----------------------
+# STAGE 2: RUNTIME
+# -----------------------
 FROM eclipse-temurin:17-jdk
 WORKDIR /app
 
-# Copy the JAR from the builder stage
+# Copy the generated JAR from the builder stage
 COPY --from=builder /app/build/libs/*.jar app.jar
 
-# Expose the port that Spring Boot listens on
 EXPOSE 8080
-
-# Default command: run the JAR
 CMD ["java", "-jar", "app.jar"]
