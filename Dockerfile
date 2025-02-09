@@ -1,15 +1,22 @@
-# Use a base image with Java 17
-FROM eclipse-temurin:17-jdk
-
-# Set the working directory in the container
+# Stage 1: Build
+FROM gradle:8.2.1-jdk17 AS builder
 WORKDIR /app
 
-# Copy the Spring Boot JAR file into the container
-# Update this path to match the output of your Gradle build
-COPY build/libs/*.jar app.jar
+# Copy the entire project into the container
+COPY . .
 
-# Expose the port Spring Boot will run on
+# Run Gradle build (skip tests if you want)
+RUN gradle clean build -x test
+
+# Stage 2: Create the final image
+FROM eclipse-temurin:17-jdk
+WORKDIR /app
+
+# Copy the JAR from the builder stage
+COPY --from=builder /app/build/libs/*.jar app.jar
+
+# Expose the port that Spring Boot listens on
 EXPOSE 8080
 
-# Command to run the application
+# Run the JAR
 CMD ["java", "-jar", "app.jar"]
