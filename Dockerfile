@@ -1,14 +1,14 @@
-# Stage 1: Build
+# Stage 1: Build the app using Gradle
 FROM gradle:8.2.1-jdk17 AS builder
 WORKDIR /app
 
-# Copy the entire project into the container
+# Copy all your project files into the build container
 COPY . .
 
-# Run Gradle build (skip tests if you want)
+# Run Gradle build (skip tests for faster builds if you want)
 RUN gradle clean build -x test
 
-# Stage 2: Create the final image
+# Stage 2: Create the final runtime image
 FROM eclipse-temurin:17-jdk
 WORKDIR /app
 
@@ -18,5 +18,5 @@ COPY --from=builder /app/build/libs/*.jar app.jar
 # Expose the port that Spring Boot listens on
 EXPOSE 8080
 
-# Run the JAR
+# Default command: run the JAR
 CMD ["java", "-jar", "app.jar"]
