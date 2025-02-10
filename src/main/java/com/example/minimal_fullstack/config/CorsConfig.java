@@ -1,7 +1,5 @@
 package com.example.minimal_fullstack.config;
 
-
-
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
@@ -14,11 +12,16 @@ public class CorsConfig {
         return new WebMvcConfigurer() {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
-                registry.addMapping("/**")
-                        .allowedOrigins("http://localhost:8081") // Allow your Vue.js app
-                        .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS");
+                registry.addMapping("/api/**")
+                        .allowedOrigins(
+                                "http://localhost:5173",  // Vite default dev server
+                                "http://localhost:8081",  // Current local frontend (Vue.js)
+                                "https://minimal-fullstack.onrender.com", // Backend URL
+                                "https://your-netlify-app.netlify.app" // Replace with actual Netlify URL
+                        )
+                        .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+                        .allowedHeaders("*");
             }
         };
     }
 }
-
