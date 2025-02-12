@@ -12,15 +12,12 @@ public class CorsConfig {
         return new WebMvcConfigurer() {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
-                registry.addMapping("/api/**")
+                registry.addMapping("/**")
                         .allowedOrigins(
-                                "http://localhost:5173",  // Vite default dev server
-                                "http://localhost:8081",  // Current local frontend (Vue.js)
-                                "https://minimal-fullstack.onrender.com", // Backend URL
-                                "https://your-netlify-app.netlify.app" // Replace with actual Netlify URL
+                                "https://minimal-frontend.netlify.app"  // ✅ Allow only this domain in production
                         )
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
-                        .allowedHeaders("*");
+                        .allowedHeaders("*");  // ✅ Allow all headers
             }
         };
     }
